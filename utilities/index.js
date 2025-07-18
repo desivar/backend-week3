@@ -4,7 +4,7 @@ const Util = {}
 /* **************************************
  * Constructs the nav HTML unordered list
  ************************************** */
-npm install connect-flashUtil.getNav = async function () {
+Util.getNav = async function () {
   let data = await invModel.getClassifications()  // Make sure this returns { rows: [...] }
   let list = "<ul>"
   list += '<li><a href="/" title="Home page">Home</a></li>'
