@@ -5,14 +5,19 @@ const pool = require("../database/")
  *************************** */
 async function getClassifications() {
     try {
-        return await pool.query("SELECT * FROM public.classification ORDER BY classification_name")
+        const data = await pool.query("SELECT * FROM public.classification ORDER BY classification_name")
+        return data.rows // <--- IMPORTANT: Return data.rows, not just the query result
     } catch (error) {
         console.error("***** getClassifications error: " + error)
+        // Re-throw the error or return an empty array if downstream can handle it.
+        // For navigation data, an empty array might be acceptable for graceful degradation.
+        // If it's critical, re-throw. Let's start with returning an empty array.
+        return [] // Return an empty array if an error occurs fetching classifications
     }
 }
 
 /* ***************************
- *  Get all inventory items and classification_name by classification_id
+ *  Get all inventory items and classification_name by classification_id
  * ************************** */
 async function getInventoryByClassificationId(classification_id) {
     try {
@@ -26,14 +31,12 @@ async function getInventoryByClassificationId(classification_id) {
         return data.rows
     } catch (error) {
         console.error("***** getclassificationsbyid error: " + error)
+        return [] // Added for consistency, or re-throw error
     }
 }
 
 /* ***************************
- *  Get inventory item by inv_id
- * ************************** */
-/* ***************************
- *  Get inventory item by inv_id
+ *  Get inventory item by inv_id
  * ************************** */
 async function getInventoryByInventoryId(inventoryId) {
     try {
@@ -44,11 +47,12 @@ async function getInventoryByInventoryId(inventoryId) {
         return data.rows
     } catch (error) {
         console.error("***** getInventoryItemById error: " + error)
+        return [] // Added for consistency, or re-throw error
     }
 }
 
 /* ***************************
- *  Add new classification
+ *  Add new classification
  * ************************** */
 async function addNewClassification(classification_name) {
     try {
@@ -59,6 +63,7 @@ async function addNewClassification(classification_name) {
         return data.rows
     } catch (error) {
         console.error("***** addNewClassification error: " + error)
+        throw error; // Re-throw so the controller can handle it
     }
 }
 
@@ -73,9 +78,15 @@ async function checkForClassification(classification_name) {
         )
         return data.rowCount
     } catch (error) {
-        return error.message
+        console.error("***** checkForClassification error: " + error) // Added console.error
+        return error.message // This returns a string message, which might be okay for validation
     }
 }
 
-module.exports = {getClassifications, getInventoryByClassificationId, 
-    getInventoryByInventoryId, addNewClassification, checkForClassification};
+module.exports = {
+    getClassifications,
+    getInventoryByClassificationId,
+    getInventoryByInventoryId,
+    addNewClassification,
+    checkForClassification
+};
