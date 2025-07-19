@@ -56,5 +56,4 @@ if (process.env.NODE_ENV === "production") { // Render typically sets NODE_ENV t
                 throw error;
             }
         },
-    };
-}
+};
