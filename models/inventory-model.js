@@ -5,14 +5,12 @@ const pool = require("../database/")
  *************************** */
 async function getClassifications() {
     try {
-        const data = await pool.query("SELECT * FROM public.classification ORDER BY classification_name")
-        return data.rows // <--- IMPORTANT: Return data.rows, not just the query result
+        const data = await pool.query("SELECT * FROM public.classification ORDER BY classification_name");
+        console.log("getClassifications result rows:", data.rows); // Add this line
+        return data.rows;
     } catch (error) {
-        console.error("***** getClassifications error: " + error)
-        // Re-throw the error or return an empty array if downstream can handle it.
-        // For navigation data, an empty array might be acceptable for graceful degradation.
-        // If it's critical, re-throw. Let's start with returning an empty array.
-        return [] // Return an empty array if an error occurs fetching classifications
+        console.error("***** getClassifications caught error:", error.message); // Change to .message for more detail
+        return [];
     }
 }
 
