@@ -14,7 +14,7 @@ router.get("/", utilities.handleErrors(invController.buildInvManagement));
 router.get("/add-classification", utilities.handleErrors(invController.buildAddClassification));
 // add new classification
 router.post('/process-add-classification',
-    invValidate.classificationRules(),
+    invValidate.classRules(),
     utilities.handleErrors(invValidate.checkClassification),
     utilities.handleErrors(invController.processAddNewClassification))
 //router.get("/add-classification", (req, res) => {res.send("connected")});
