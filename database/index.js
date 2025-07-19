@@ -1,14 +1,12 @@
 const { Pool } = require("pg");
-require("dotenv").config(); // This is for local development only
+require("dotenv").config();
 
 /* ***************
  * Connection Pool
  * *************** */
 let pool;
 
-// Determine if we are in development or production environment
-// This needs to be correctly handled for Render to connect
-if (process.env.NODE_ENV === "production") { // Render typically sets NODE_ENV to 'production'
+if (process.env.NODE_ENV === "production") {
     pool = new Pool({
         user: process.env.PGUSER,
         password: process.env.PGPASSWORD,
@@ -16,35 +14,21 @@ if (process.env.NODE_ENV === "production") { // Render typically sets NODE_ENV t
         port: process.env.PGPORT,
         database: process.env.PGDATABASE,
         ssl: {
-            // Use rejectUnauthorized: false when PGSSLMODE is 'no-verify'
-            // This is commonly required for Render connections
             rejectUnauthorized: process.env.PGSSLMODE === 'no-verify' ? false : true,
         },
     });
-
-    // In production, we typically just export the pool directly for other models to use
-    module.exports = pool;
-
+    module.exports = pool; // Export the pool directly for production
 } else { // Development environment (local machine)
-  pool = new Pool({
-    user: process.env.PGUSER,
-    password: process.env.PGPASSWORD,
-    host: process.env.PGHOST,
-    port: process.env.PGPORT,
-    database: process.env.PGDATABASE,
-    // Option 1: No SSL for local
-    // ssl: false, // Or just remove the 'ssl' property entirely
+    pool = new Pool({
+        user: process.env.PGUSER,
+        password: process.env.PGPASSWORD,
+        host: process.env.PGHOST,
+        port: process.env.PGPORT,
+        database: process.env.PGDATABASE,
+        ssl: false, // Recommended for local dev unless you explicitly configured SSL
+    });
 
-    // Option 2: If your local Postgres *does* use SSL but is self-signed
-    // ssl: {
-    //   rejectUnauthorized: false,
-    // },
-  });
-  
-}
-
-    // Added for troubleshooting queries during development
-    // This allows you to add console.log for queries locally
+    // THIS BLOCK MUST BE INSIDE THE ELSE STATEMENT
     module.exports = {
         async query(text, params) {
             try {
@@ -52,8 +36,9 @@ if (process.env.NODE_ENV === "production") { // Render typically sets NODE_ENV t
                 console.log("executed query", { text });
                 return res;
             } catch (error) {
-                console.error("error in query", { text });
+                console.error("error in query", { text, error: error.message }); // Added .message for better error detail
                 throw error;
             }
         },
-};
+    };
+}
