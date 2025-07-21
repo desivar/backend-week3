@@ -1,18 +1,32 @@
 const express = require('express');
 const router = express.Router();
-const path = require('path'); // Add this line to require the 'path' module
+const path = require('path');
 
-// Static Routes
-// This single line correctly serves all static files from the 'public' directory
-// It correctly calculates the path to 'public' relative to the project root.
-router.use(express.static(path.join(__dirname, '..', 'public')));
+// Enhanced Static File Serving
+router.use(express.static(path.join(__dirname, '..', 'public'), {
+  // Cache control for better performance
+  maxAge: '1d',
+  // Set proper Content-Type headers
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.css')) {
+      res.set('Content-Type', 'text/css');
+    }
+    if (filePath.endsWith('.js')) {
+      res.set('Content-Type', 'application/javascript');
+    }
+  }
+});
 
-
-// You can remove or comment out these lines as they are redundant and
-// were causing incorrect pathing for your static assets.
-// router.use("/css", express.static(__dirname + "public/css"));
-// router.use("/js", express.static(__dirname + "public/js"));
-// router.use("/images", express.static(__dirname + "public/images"));
+// Debugging route to verify static files are served
+router.get('/debug-static', (req, res) => {
+  res.json({
+    staticPath: path.join(__dirname, '..', 'public'),
+    files: {
+      css: path.join(__dirname, '..', 'public', 'styles', 'styles.css'),
+      images: path.join(__dirname, '..', 'public', 'images')
+    }
+  });
+});
 
 module.exports = router;
 
