@@ -1,35 +1,45 @@
 const invModel = require("../models/inventory-model");
 
-// Initialize Util as an object
-const Util = {};
+const utilities = {};
 
-// Add getNav method to Util
-Util.getNav = async function () {
-  try {
-    const data = await invModel.getClassifications();
-    let list = "<ul>";
-    list += '<li><a href="/" title="Home page">Home</a></li>';
+/* ***************************
+ * Build navigation bar
+ *************************** */
+utilities.getNav = async function () {
+  let data = await invModel.getClassifications();
+  let list = "<ul>";
+  list += '<li><a href="/" title="Home page">Home</a></li>';
 
-    if (data && data.rows && data.rows.length > 0) {
-      data.rows.forEach((row) => {
-        list += `<li>
-          <a href="/inv/type/${row.classification_id}" 
-             title="See our ${row.classification_name} inventory">
-            ${row.classification_name}
-          </a>
-        </li>`;
-      });
-    } else {
-      console.error("⚠️ No classifications found");
-    }
-
-    list += "</ul>";
-    return list;
-  } catch (error) {
-    console.error("Navigation generation error:", error);
-    return '<ul><li><a href="/">Home</a></li></ul>';
+  if (data && data.rows && data.rows.length > 0) {
+    data.rows.forEach((row) => {
+      list += "<li>";
+      list +=
+        '<a href="/inv/type/' +
+        row.classification_id +
+        '" title="See our inventory of ' +
+        row.classification_name +
+        ' vehicles">' +
+        row.classification_name +
+        "</a>";
+      list += "</li>";
+    });
+  } else {
+    console.error("⚠️ No classifications found or database not returning rows.");
   }
+
+  list += "</ul>";
+  return list;
 };
 
-// Export the Util object
-module.exports = Util;
+/* ***************************
+ * Async error handler wrapper
+ *************************** */
+utilities.handleErrors = fn => (req, res, next) => {
+  Promise.resolve(fn(req, res, next))
+    .catch(err => {
+      console.error(`Error at: "${req.originalUrl}": ${err.message}`);
+      next(err);
+    });
+};
+
+module.exports = utilities;
