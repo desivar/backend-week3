@@ -15,7 +15,7 @@ router.use(express.static(path.join(__dirname, '..', 'public'), {
       res.set('Content-Type', 'application/javascript');
     }
   }
-});
+}));
 
 // Debugging route to verify static files are served
 router.get('/debug-static', (req, res) => {
