@@ -1,51 +1,110 @@
-const invModel = require("../models/inventory-model");
-const pool = require('../database/'); // Direct database connection
+const invModel = require("../models/inventory-model")
+const Util = {}
 
-const Util = {
-  /* ****************************************
-  * Robust Error Handler
-  **************************************** */
-  handleErrors: fn => (req, res, next) => {
-    Promise.resolve(fn(req, res, next)).catch(err => {
-      console.error('Route error:', err);
-      next(err);
-    });
-  },
+/* **************************************
+ * Constructs the nav HTML unordered list
+ ************************************** */
+Util.getNav = async function (req, res, next) {
+  let data = await invModel.getClassifications()
+  let list = "<ul>"
+  list += '<li><a href="/" title="Home page">Home</a></li>'
+  data.rows.forEach((row) => {
+    list += "<li>"
+    list +=
+      '<a href="/inv/type/' +
+      row.classification_id +
+      '" title="See our inventory of ' +
+      row.classification_name +
+      ' vehicles">' +
+      row.classification_name +
+      "</a>"
+    list += "</li>"
+  })
+  list += "</ul>"
+  return list
+}
 
-  /* ****************************************
-  * Guaranteed-Working Navigation
-  **************************************** */
-  getNav: async function() {
-    try {
-      // Verify database connection first
-      await pool.query('SELECT 1');
-      
-      const data = await invModel.getClassifications();
-      if (!data?.rows) throw new Error('No data returned');
-      
-      let html = '<ul class="nav-list">';
-      html += '<li><a href="/">Home</a></li>';
-
-      data.rows.forEach(row => {
-        html += `<li><a href="/inv/type/${row.classification_id}">${row.classification_name}</a></li>`;
-      });
-
-      return html + '</ul>';
-
-    } catch (err) {
-      console.error('Navigation using fallback:', err.message);
-      // Hardcoded fallback that matches your DB structure
-      return `
-        <ul class="nav-list">
-          <li><a href="/">Home</a></li>
-          <li><a href="/inv/type/1">Custom</a></li>
-          <li><a href="/inv/type/3">SUV</a></li>
-          <li><a href="/inv/type/4">Truck</a></li>
-          <li><a href="/inv/type/5">Sedan</a></li>
-        </ul>
-      `;
-    }
+/* **************************************
+* Build the classification view HTML
+* ************************************ */
+Util.buildClassificationGrid = async function(data){
+  let grid
+  if(data.length > 0){
+    grid = '<ul id="inv-display">'
+    data.forEach(vehicle => { 
+      grid += '<li>'
+        grid +=  '<a href="../../inv/detail/'+ vehicle.inv_id 
+        + '" title="View ' + vehicle.inv_make + ' '+ vehicle.inv_model 
+        + 'details"><img src="' + vehicle.inv_thumbnail 
+        +'" alt="Image of '+ vehicle.inv_make + ' ' + vehicle.inv_model 
+        +' on CSE Motors"></a>'
+        grid += '<div class="namePrice">'
+          grid += '<hr>'
+          grid += '<h2>'
+            grid += '<a href="../../inv/detail/' + vehicle.inv_id +'" title="View ' 
+            + vehicle.inv_make + ' ' + vehicle.inv_model + ' details">' 
+            + vehicle.inv_make + ' ' + vehicle.inv_model + '</a>'
+          grid += '</h2>'
+          grid += '<span>$' 
+          + new Intl.NumberFormat('en-US').format(vehicle.inv_price) + '</span>'
+        grid += '</div>'
+      grid += '</li>'
+    })
+    grid += '</ul>'
+  } else { 
+    grid += '<p class="notice">Sorry, no matching vehicles could be found.</p>'
   }
-};
+  return grid
+}
+
+// format price in money format
+const money = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  maximumFractionDigits: 0
+});
+
+/* **************************************
+* Build the item details view HTML
+* ************************************ */
+Util.buildInventoryDisplay = async function(data){
+  let grid
+  let d = data[0]
+  if(data.length > 0){
+    grid = '<div id="inv-item-detail">'
+      grid += '<div class="detail-img">'
+        grid +=  '<img src="' + d.inv_image 
+          + '" alt="Image of ' + d.inv_year + " " + d.inv_make + " " + d.inv_model
+          + ' on CSE Motors">'
+      grid += '</div>'
+      grid += '<div class="general-information">'
+        grid += '<h3>' + d.inv_make + " " + d.inv_model + ' Details</h3>'
+        grid += '<p><span>Price: ' + money.format(d.inv_price) + '</span></p>'
+        grid += '<p><span>Description: </span>' + d.inv_description + '</p>'
+        grid += '<p><span>Color: </span>' + d.inv_color + '</p>'
+        grid += '<p><span>Miles: </span>' + d.inv_miles.toLocaleString('en-US') + '</p>'
+      grid += '</div>'
+    grid += '</div>'
+  } else { 
+    grid += '<p class="notice">Sorry, no matching vehicle could be found.</p>'
+  }
+  return grid
+}
+
+/* **************************************
+* Build error page view HTML
+* ************************************ */
+Util.buildErrorPage = async function(){
+  let grid = '<p>The Error route is connected correctly.</p>'
+  return grid
+}
+
+/* ****************************************
+ * Middleware For Handling Errors
+ * Wrap other function in this for 
+ * General Error Handling
+ **************************************** */
+Util.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
+
 
 module.exports = Util;
