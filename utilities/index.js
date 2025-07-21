@@ -1,40 +1,42 @@
-const invModel = require("../models/inventory-model")
-const Util = {}
-
-/* **************************************
- * Constructs the nav HTML unordered list
- ************************************** */
+// In utilities/index.js
 Util.getNav = async function () {
-  let data = await invModel.getClassifications()
-  let list = "<ul>"
-  list += '<li><a href="/" title="Home page">Home</a></li>'
+  try {
+    const data = await invModel.getClassifications();
+    console.log("Classification data:", data.rows); // Debug log
+    
+    let list = "<ul class='nav-list'>";
+    list += '<li><a href="/">Home</a></li>';
 
-  if (data && data.rows && data.rows.length > 0) {
-    data.rows.forEach((row) => {
-      list += "<li>"
-      list +=
-        '<a href="/inv/type/' +
-        row.classification_name + // <--- CHANGED FROM classification_id TO classification_name
-        '" title="See our inventory of ' +
-        row.classification_name +
-        ' vehicles">' +
-        row.classification_name +
-        "</a>"
-      list += "</li>"
-    })
-  } else {
-    console.error("⚠️ No classifications found or database not returning rows.")
+    if (data?.rows?.length > 0) {
+      data.rows.forEach((row) => {
+        list += `<li>
+          <a href="/inv/type/${row.classification_id}" 
+             class="nav-link">
+            ${row.classification_name}
+          </a>
+        </li>`;
+      });
+    } else {
+      console.error("No classifications found - using fallback");
+      // Hardcoded fallback matching your database
+      list += `
+        <li><a href="/inv/type/1">Custom</a></li>
+        <li><a href="/inv/type/2">Sport</a></li>
+        <li><a href="/inv/type/3">SUV</a></li>
+        <li><a href="/inv/type/4">Truck</a></li>
+        <li><a href="/inv/type/5">Sedan</a></li>
+      `;
+    }
+
+    list += "</ul>";
+    return list;
+  } catch (error) {
+    console.error("Navigation generation error:", error);
+    return `
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/inventory">All Vehicles</a></li>
+      </ul>
+    `;
   }
-
-  list += "</ul>"
-  return list
-}
-
-// ... (rest of your Util functions remain the same)
-Util.buildClassificationGrid = async function (data) { /* ... */ }
-Util.buildInventoryDisplay = async function (data) { /* ... */ }
-Util.buildErrorPage = async function () { /* ... */ }
-Util.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
-
-module.exports = Util
-
+};
