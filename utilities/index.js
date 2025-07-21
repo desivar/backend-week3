@@ -1,9 +1,10 @@
+const invModel = require("../models/inventory-model");
+const Util = {};
+
 Util.getNav = async function() {
   try {
     const data = await invModel.getClassifications();
-    
-    // Return as ARRAY of items (not HTML string)
-    const navItems = [
+    let navItems = [
       { name: "Home", url: "/", title: "Home page" }
     ];
 
@@ -12,15 +13,14 @@ Util.getNav = async function() {
         navItems.push({
           name: row.classification_name,
           url: `/inv/type/${row.classification_id}`,
-          title: `Browse ${row.classification_name}`
+          title: `Browse ${row.classification_name} vehicles`
         });
       });
     }
-    return navItems; // ← Returns clean data array
-    
+    return navItems;
   } catch (error) {
     console.error("Navigation error:", error);
-    return [ // Fallback data
+    return [
       { name: "Home", url: "/" },
       { name: "Custom", url: "/inv/type/1" },
       { name: "SUV", url: "/inv/type/3" },
@@ -29,3 +29,5 @@ Util.getNav = async function() {
     ];
   }
 };
+
+module.exports = Util;
