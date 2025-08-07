@@ -7,18 +7,19 @@
  *************************/
 const express = require("express");
 const expressLayouts = require("express-ejs-layouts");
-require("dotenv").config(); 
+require("dotenv").config(); // This must be the very first require statement
 const static = require("./routes/static");
 const baseController = require("./controllers/baseController");
 const inventoryRoute = require("./routes/inventoryRoute");
 const utilities = require("./utilities/");
 const session = require("express-session");
-const pool = require('./database/');
+const pool = require('./database/'); // Move this line to after the dotenv config
 const bodyParser = require("body-parser");
 const errorRoute = require('./routes/errorRoute');
 const cookieParser = require("cookie-parser");
 
 const app = express();
+
 
 /* ***********************
  * Middleware
