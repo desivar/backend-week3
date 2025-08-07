@@ -1,29 +1,61 @@
 // Needed Resources 
 const express = require("express")
-const router = new express.Router() 
+const router = new express.Router()
 const invController = require("../controllers/invController")
-const errorController = require("../controllers/errorController")
 const utilities = require("../utilities")
-const invValidate = require('../utilities/inventory-validation')
+const validate = require('../utilities/inventory-validation')
 
 // Route to build inventory by classification view
 router.get("/type/:classificationId", utilities.handleErrors(invController.buildByClassificationId));
 
-// Inventory management
-router.get("/", utilities.handleErrors(invController.buildInvManagement));
+// Route to build inventory detail view
+router.get("/detail/:invId", utilities.handleErrors(invController.buildByInventoryId));
+
+// Route to build management view, Unit 4 Individual Activity
+router.get("/", utilities.handleErrors(invController.buildManagement));
+
+// Route to build add classification detail view, Unit 4 Individual Activity
 router.get("/add-classification", utilities.handleErrors(invController.buildAddClassification));
-// add new classification
-router.post('/process-add-classification',
-    invValidate.classificationRules(),
-    utilities.handleErrors(invValidate.checkClassification),
-    utilities.handleErrors(invController.processAddNewClassification))
-//router.get("/add-classification", (req, res) => {res.send("connected")});
+
+// Route to build add inventory detail view, Unit 4 Individual Activity
 router.get("/add-inventory", utilities.handleErrors(invController.buildAddInventory));
 
-// Route to build 500 error page
-router.get("/err", utilities.handleErrors(errorController.build500Page));
+// Route to get inventory for AJAXroute. Week 5, AJAX Select Inventory Activity
+router.get("/getInventory/:classification_id", utilities.handleErrors(invController.getInventoryJSON))
 
-// Route to build inventory item by id
-router.get("/:inventoryId", utilities.handleErrors(invController.buildByInventoryId));
+// Route to edit the inventory form. Week 5, Update Inventory item (Step 1) 
+router.get("/edit/:inv_id", utilities.handleErrors(invController.editInventoryView));
+ 
+// Route to delete the inventory form. Week 5, Team Activity
+router.get("/delete/:inv_id", utilities.handleErrors(invController.deleteInventoryView));
+
+// Process the Add Classification data, Unit 4 Individual Activity
+router.post(
+  "/add-classification",
+  validate.classificationRules(),
+  validate.checkClassificationData,
+  utilities.handleErrors(invController.addClassification)
+)
+
+
+// Process the Add Inventory data, Unit 4 Individual Activity
+router.post(
+  "/add-inventory",
+  validate.inventoryRules(),
+  validate.checkInventoryData,
+  utilities.handleErrors(invController.addInventory)
+)
+
+// Route to update the inventory form. Week 5, Update Inventory item (Step 2) 
+ router.post(
+   "/update/",
+   validate.newInventoryRules(),
+   validate.checkUpdateData,
+   utilities.handleErrors(invController.updateInventory))
+
+// Route to delete the inventory form. Week 5, Update Inventory item (Step 2) 
+router.post(
+  "/delete/",
+  utilities.handleErrors(invController.deleteInventory));
 
 module.exports = router;
