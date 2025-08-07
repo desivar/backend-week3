@@ -7,13 +7,13 @@
  *************************/
 const express = require("express");
 const expressLayouts = require("express-ejs-layouts");
-require("dotenv").config(); // This must be the very first require statement
+require("dotenv").config(); 
 const static = require("./routes/static");
 const baseController = require("./controllers/baseController");
 const inventoryRoute = require("./routes/inventoryRoute");
 const utilities = require("./utilities/");
 const session = require("express-session");
-const pool = require('./database/'); // Move this line to after the dotenv config
+const pool = require('./database/'); 
 const bodyParser = require("body-parser");
 const errorRoute = require('./routes/errorRoute');
 const cookieParser = require("cookie-parser");
@@ -103,8 +103,8 @@ app.use(async (err, req, res, next) => {
  * Local Server Information
  * Values from .env (environment) file
  *************************/
-const port = process.env.PORT
-const host = process.env.HOST
+const port = process.env.PORT||5500
+const host = process.env.HOST||'localhost'
 
 /* ***********************
  * Log statement to confirm server operation
