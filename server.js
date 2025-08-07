@@ -1,24 +1,25 @@
 /* ******************************************
- * This server.js file is the primary file of the 
- * application. It is used to control the project.
- *******************************************/
+ * This server.js file is the primary file of the 
+ * application. It is used to control the project.
+ *******************************************/
 /* ***********************
- * Require Statements
- *************************/
-const express = require("express")
-const expressLayouts = require("express-ejs-layouts")
-const env = require("dotenv").config()
-const static = require("./routes/static")
-const baseController = require("./controllers/baseController")
+ * Require Statements
+ *************************/
+const express = require("express");
+const expressLayouts = require("express-ejs-layouts");
+// Corrected line and placement
+require("dotenv").config(); 
+const static = require("./routes/static");
+const baseController = require("./controllers/baseController");
 const inventoryRoute = require("./routes/inventoryRoute");
-const utilities = require("./utilities/")
-const session = require("express-session")
-const pool = require('./database/')
-const bodyParser = require("body-parser")
+const utilities = require("./utilities/");
+const session = require("express-session");
+const pool = require('./database/');
+const bodyParser = require("body-parser");
 const errorRoute = require('./routes/errorRoute');
-const cookieParser = require("cookie-parser")
+const cookieParser = require("cookie-parser");
 
-const app = express()
+const app = express();
 
 /* ***********************
  * Middleware
