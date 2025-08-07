@@ -1,0 +1,70 @@
+
+<!-- Week 6 -->
+
+<!-- Display the Content Heading -->
+<% if (title) { %>
+    <h1><%= title %></h1>
+    <% } else {
+      res.redirect('/')
+    } %>
+
+<!-- Display Messages -->
+<% message %>
+
+<!-- Display Error Message -->
+<% if (errors) { %>
+  <ul class="notice">
+ <% errors.array().forEach(error => { %>
+   <li><%= error.msg %></li>
+<%  }) %>
+ </ul>
+<% } %>
+
+<!-- Display the Content Body -->
+<form action="/account/update" method="post">
+    <div class="form">
+      <fieldset>
+        <div>
+          <label for="account_firstname">First Name:</label>
+          <input type="text" name="account_firstname" id="account_firstname" required value="<%= locals.account_firstname %>">
+        </div>
+        <div>
+          <label for="account_lastname">Last Name:</label>
+          <input type="text" name="account_lastname" id="account_lastname" required value="<%= locals.account_lastname %>">
+        </div>
+        <div>
+          <label for="account_email">Email Address</label>
+          <input type="text" name="account_email" id="account_email" required value="<%= locals.account_email %>">
+        </div>
+        <div>
+            <input type="submit" class="submit" name="submit"  id="submit" value="Update">
+            <input type="hidden" name="account_id" <% if(locals.account_id) { %> value="<%= locals.account_id %>" <% } %>> 
+        </div>
+        </fieldset>
+    </div>
+  </form>
+  
+
+  <h2>Update Password</h2>
+  <form action="/account/update-password" method="post">
+    <div class="form">
+          <label for="account_password">Password:</label> 
+          <input type="password" name="account_password" id="account_password" required pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{12,}$">
+        </div>
+        <span>Passwords must be at least 12 characters and contain at least 1 number, 1 capital letter and 1 special character</span> 
+        <span>*note your original password will be changed</span>
+
+
+        <div class="password-toggle">
+            <input type="checkbox" id="password-toggle" onclick="togglePasswordVisibility()">
+            <label for="password-toggle">Show Password</label>
+          </div>
+
+
+        <div>
+           <input type="submit" class="submit" name="submit"  id="submit" value="Change Password">
+           <input type="hidden" name="account_id" <% if(locals.account_id) { %> value="<%= locals.account_id %>" <% } %>> 
+        </div>
+      </fieldset>
+    </div>
+  </form>

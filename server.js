@@ -6,19 +6,19 @@
  * Require Statements
  *************************/
 const express = require("express")
-const env = require("dotenv").config()
-const app = express()
-const static = require("./routes/static")
 const expressLayouts = require("express-ejs-layouts")
+const env = require("dotenv").config()
+const static = require("./routes/static")
 const baseController = require("./controllers/baseController")
-const errorController = require("./controllers/errorController")
-const accountController = require("./controllers/accountController")
-const inventoryRoute = require("./routes/inventoryRoute")
-const accountRoute = require("./routes/accountRoute")
-const utilities = require("./utilities")
+const inventoryRoute = require("./routes/inventoryRoute");
+const utilities = require("./utilities/")
 const session = require("express-session")
 const pool = require('./database/')
 const bodyParser = require("body-parser")
+const errorRoute = require('./routes/errorRoute');
+const cookieParser = require("cookie-parser")
+
+const app = express()
 
 /* ***********************
  * Middleware
@@ -34,6 +34,7 @@ app.use(session({
   name: 'sessionId',
 }))
 
+
 // Express Messages Middleware
 app.use(require('connect-flash')())
 app.use(function(req, res, next){
@@ -41,8 +42,16 @@ app.use(function(req, res, next){
   next()
 })
 
+
+// Week 4, Process Registration View
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+
+// Week 5, Login Process Activity
+app.use(cookieParser())
+
+// Week 5, Login Process Activity
+app.use(utilities.checkJWTToken)
 
 /* ***********************
  * View Engine and Templates
@@ -55,17 +64,18 @@ app.set("layout", "./layouts/layout") // not at views root
  * Routes
  *************************/
 app.use(static)
+
 // Index route
 app.get("/", utilities.handleErrors(baseController.buildHome))
-// Inventory routes
-app.use("/inv", utilities.handleErrors(inventoryRoute))
-// Inventory Detail routes
-app.use("/inv/detail", utilities.handleErrors(inventoryRoute))
-// Account route
-app.use("/account", utilities.handleErrors(accountRoute))
 
-// error route
-app.use("/error", utilities.handleErrors(errorController))
+// Inventory routes
+app.use("/inv", inventoryRoute)
+
+// Error routes -- week 3, Individual Activity
+app.use('/error', errorRoute);
+
+// Account routes - Week 4, Learning Activity
+app.use("/account", require("./routes/accountRoute"))
 
 // File Not Found Route - must be last route in list
 app.use(async (req, res, next) => {
@@ -86,6 +96,7 @@ app.use(async (err, req, res, next) => {
     nav
   })
 })
+
 
 /* ***********************
  * Local Server Information
