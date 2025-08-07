@@ -7,7 +7,6 @@
  *************************/
 const express = require("express");
 const expressLayouts = require("express-ejs-layouts");
-// Corrected line and placement
 require("dotenv").config(); 
 const static = require("./routes/static");
 const baseController = require("./controllers/baseController");
