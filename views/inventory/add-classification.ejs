@@ -1,39 +1,8 @@
-<!-- Week 4, Individual Activity -->
-
-<!-- Display the Content Heading -->
+<!-- Content Heading -->
 <% if (title) { %>
     <h1><%= title %></h1>
     <% } else {
       res.redirect('/')
-    } %>
+} %>
 
-<!-- Display Messages -->
-<%# message %>
-
-<!-- Display Error Message -->
-<% if (errors) { %>
-  <ul class="notice">
- <% errors.array().forEach(error => { %>
-   <li><%= error.msg %></li>
-<%  }) %>
- </ul>
-<% } %>
-
-<!-- Display the Content Body -->
-<form action="/inv/add-classification" method="post">
-    <div class="form">
-      <fieldset>
-        <legend>FIELD IS REQUIRED.</legend>
-        <div>
-          <label for="classification_name">Classification name</label>
-        </div>
-          <input type="text" name="classification_name" id="classification_name" required pattern="^[a-zA-Z0-9]*$">
-        <div>
-          <span>Name must be alphabetic characters only.</span> 
-        </div>
-        <div>
-          <input type="submit" class="submit" name="submit" id="submit" value="Add Classification">
-        </div>
-      </fieldset>
-    </div>
-  </form>
+<%- include('../inventory-partials/add-classification-partial') %>

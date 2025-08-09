@@ -1,14 +1,12 @@
-<!-- Content Heading -->
+<!-- Set title if exists -->
 <% if (title) { %>
-    <h1><%= title %></h1>
-    <% } else {
-      res.redirect('/')
-    } %>
+<h1><%= title %></h1>
+<% } else {
+    res.redirect('/')
+} %>
 
-<!-- Flash Message -->
-
+<!-- Message output -->
 <%# messages() %>
 
-<!-- Inventory Items -->
-
+<!-- main view content output -->
 <%- grid %>

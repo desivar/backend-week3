@@ -1,29 +1,8 @@
-<!-- Week 4, Individual Activity -->
-
 <!-- Content Heading -->
 <% if (title) { %>
     <h1><%= title %></h1>
     <% } else {
       res.redirect('/')
-    } %>
+} %>
 
-<!-- Flash Message -->
-
-<%- messages() %>
-
-<!-- Display the Content Body -->
-<p><a href="/inv/add-classification">Add New Classification</a></p>
-<p><a href="/inv/add-inventory">Add New Vehicle</a></p>
-
-<h2>Manage Inventory</h2>
-<p>Choose a classification to see those inventory items.</p>
-<%- classificationSelect %>
-
-<table id="inventoryDisplay"></table>
-
-<noscript>JavaScript must be enabled to use this page.</noscript>
-
-<script src="../../js/inventory.js"></script>
-
-<!-- To access to this view use the following route: localhost:5500/inv/ -->
-<!-- To edit this view use the following route: localhost:5500/inv/edit/# 
+<%- include('../inventory-partials/management-partial') %>
