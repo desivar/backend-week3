@@ -1,12 +1,7 @@
-<!-- Set title if exists -->
 <% if (title) { %>
-<h1><%= title %></h1>
-<% } else {
-    res.redirect('/')
-} %>
+  <h1 class="grid-header"><%= title %></h1>
+<% } else { res.redirect('/') } %>
 
-<!-- Message output -->
-<%# messages() %>
+<%- messages() %>
 
-<!-- main view content output -->
 <%- grid %>
