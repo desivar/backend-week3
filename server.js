@@ -18,6 +18,7 @@ const inventoryRoute = require("./routes/inventoryRoute");
 const utilities = require("./utilities");
 const accountRoute = require("./routes/accountRoute");
 const cartRoute = require("./routes/cartRoute");
+const inquiryModel = require("./models/inquiryModel");
 const bodyParser = require("body-parser");
 
 /* ***********************
@@ -73,6 +74,41 @@ app.use("/cart", utilities.handleErrors(cartRoute));
 
 // Index route
 app.get("/", utilities.handleErrors(baseController.buildHome));
+// Checkout route
+app.get("/checkout/checkout", utilities.handleErrors(async (req, res) => {
+    let nav = await utilities.getNav();
+    res.render("checkout/checkout", {
+        title: "Checkout",
+        nav
+    });
+}));
+
+// Checkout form submission
+app.post("/checkout/submit", utilities.handleErrors(async (req, res) => {
+    const { name, email, message } = req.body;
+    
+    try {
+        await inquiryModel.addInquiry(name, email, message);
+        res.redirect("/thankyou");
+    } catch (error) {
+        let nav = await utilities.getNav();
+        res.render("checkout/checkout", {
+            title: "Checkout",
+            message: "There was an error submitting your form.",
+            nav
+        });
+    }
+}));
+
+// Thank you page route
+app.get("/thankyou", utilities.handleErrors(async (req, res) => {
+    let nav = await utilities.getNav();
+    res.render("thankyou", {
+        title: "Thank You",
+        nav
+    });
+}));
+
 
 // File Not Found Route - must be last route in list
 app.use(
