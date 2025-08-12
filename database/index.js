@@ -24,7 +24,7 @@ if (process.env.NODE_ENV === "production") {
         host: process.env.PGHOST,
         port: process.env.PGPORT,
         database: process.env.PGDATABASE,
-        ssl: false, // Recommended for local dev unless you explicitly configured SSL
+        ssl: true, // Recommended for local dev unless you explicitly configured SSL
     });
 
     // THIS BLOCK MUST BE INSIDE THE ELSE STATEMENT
