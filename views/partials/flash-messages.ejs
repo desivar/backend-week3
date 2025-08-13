@@ -1,0 +1,91 @@
+<% if (typeof messages != 'undefined' && messages.notice && messages.notice.length > 0) { %>
+  <div class="flash-messages" aria-live="polite">
+    <% messages.notice.forEach(msg => { %>
+      <div class="alert alert-info">
+        <%= msg %>
+        <button type="button" class="close" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    <% }) %>
+  </div>
+<% } %>
+
+<% if (typeof messages.error != 'undefined' && messages.error.length > 0) { %>
+  <div class="flash-messages" aria-live="assertive">
+    <% messages.error.forEach(msg => { %>
+      <div class="alert alert-danger">
+        <%= msg %>
+        <button type="button" class="close" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    <% }) %>
+  </div>
+<% } %>
+
+<style>
+.flash-messages {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  max-width: 400px;
+}
+
+.alert {
+  padding: 15px;
+  margin-bottom: 10px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  animation: slideIn 0.5s forwards;
+}
+
+.alert-info {
+  color: #0c5460;
+  background-color: #d1ecf1;
+  border-color: #bee5eb;
+}
+
+.alert-danger {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+.close {
+  float: right;
+  font-size: 1.5rem;
+  font-weight: bold;
+  line-height: 1;
+  color: inherit;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+</style>
+
+<script>
+// Auto-dismiss flash messages after 5 seconds
+document.addEventListener('DOMContentLoaded', function() {
+  const closeButtons = document.querySelectorAll('.close');
+  
+  closeButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      this.parentElement.style.display = 'none';
+    });
+    
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+      button.parentElement.style.animation = 'fadeOut 0.5s forwards';
+      setTimeout(() => button.parentElement.remove(), 500);
+    }, 5000);
+  });
+});
+</script>
