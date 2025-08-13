@@ -127,30 +127,35 @@ async function accountLogin(req, res, next) {
         next(error);
     }
 }
-
 /* ****************************************
- * Process logout request
- * ************************************ */
+ * Process logout request
+ * ************************************ */
 async function accountLogout(req, res) {
-  // Clear the JWT cookie first. This happens immediately.
-  res.clearCookie("jwt");
+    // Check if a session exists before trying to destroy it
+    if (req.session) {
+        req.session.destroy(err => {
+            if (err) {
+                console.error("Error destroying session:", err);
+                // Flash an error message if session destruction fails
+                req.flash("error", "Failed to log out. Please try again.");
+                return res.redirect("/account/login");
+            }
 
-  // Destroy the session, then run the callback function.
-  // All code that needs the session MUST be inside this callback.
-  req.session.destroy(err => {
-    if (err) {
-      console.error("Error destroying session:", err);
-      // Optional: flash an error message if session destruction fails
-      req.flash("error", "Failed to log out. Please try again.");
-      return res.redirect("/account/login");
-    }
-
-    // These lines will only run after the session is successfully destroyed.
-    res.locals.loggedin = 0;
-    res.locals.accountData = null;
-    req.flash("notice", "You have been logged out.");
-    res.redirect("/");
-  });
+            // The code inside this callback will only run AFTER the session is successfully destroyed
+            res.clearCookie("jwt");
+            res.locals.loggedin = 0;
+            res.locals.accountData = null;
+            req.flash("notice", "You have been logged out.");
+            res.redirect("/");
+        });
+    } else {
+        // If no session exists, simply clear the cookie and redirect
+        res.clearCookie("jwt");
+        res.locals.loggedin = 0;
+        res.locals.accountData = null;
+        // Don't use req.flash here, as there is no session to use it with
+        res.redirect("/");
+    }
 }
 
 /* ****************************************
