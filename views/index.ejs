@@ -15,9 +15,10 @@
 					<li>Superman doors</li>
 					<li>Fuzzy dicel</li>
 				</ul>
-			<a href="/checkout/checkout">
-    <img class="delorean-btn" src="images/site/own_today.png" alt="button for delorean">
-</a>
+			<form action="/checkout" method="GET">
+    <input type="hidden" name="inv_id" value="<%= vehicle.inv_id %>">
+    <button type="submit">Own Today</button>
+</form>
 		</div>
 	</section>
 
