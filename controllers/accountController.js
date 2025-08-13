@@ -127,23 +127,26 @@ async function accountLogin(req, res, next) {
         next(error);
     }
 }
+
+
 /* ****************************************
  * Process logout request
  * ************************************ */
 async function accountLogout(req, res) {
-  // Clear the JWT cookie
+  // Clear the JWT cookie first. This happens immediately.
   res.clearCookie("jwt");
 
-  // Destroy the session and then execute the callback
+  // Destroy the session and then execute the callback.
+  // All code that needs the session MUST be inside this callback.
   req.session.destroy(err => {
     if (err) {
       console.error("Error destroying session:", err);
-      // If there's an error, you can still flash a message
+      // Optional: Flash an error message even if session fails to destroy
       req.flash("error", "Failed to log out. Please try again.");
       return res.redirect("/account/login");
     }
 
-    // After the session is destroyed, clear locals, set a flash message, and redirect
+    // This code will only run AFTER the session is successfully destroyed.
     res.locals.loggedin = 0;
     res.locals.accountData = null;
     req.flash("notice", "You have been logged out.");
@@ -151,6 +154,11 @@ async function accountLogout(req, res) {
   });
 }
 
+// Ensure the function is exported so the router can use it.
+module.exports = {
+  // ... other controller functions
+  accountLogout,
+};
 /* ****************************************
  * Deliver account management view
  * *************************************** */
