@@ -1,4 +1,5 @@
 // Needed Resources
+delete require.cache[require.resolve('../controllers/invController')];
 const express = require("express");
 const router = new express.Router();
 const invController = require("../controllers/invController");
