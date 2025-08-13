@@ -100,10 +100,10 @@ app.get("/checkout", utilities.handleErrors(async (req, res) => {
 
 // Checkout form submission
 app.post("/checkout/submit", utilities.handleErrors(async (req, res) => {
-    const { name, email, message } = req.body;
+    const { name, email, message, inv_id } = req.body;
     
     try {
-        await inquiryModel.addInquiry(name, email, message);
+            await inquiryModel.addInquiry(name, email, message);
         res.redirect("/thankyou");
     } catch (error) {
         let nav = await utilities.getNav();
