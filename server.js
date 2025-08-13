@@ -16,7 +16,7 @@ const inquiryModel = require("./models/inquiryModel");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const csurf = require("csurf");
-const bodyParser = require("body-parser");
+
 const pool = require("./database/");
 
 /* ***********************
@@ -48,19 +48,10 @@ app.use(require("connect-flash")());
 app.use(csurf({ cookie: true }));
 app.use(utilities.checkJWTToken);
 
-// Body parser middleware should be loaded earlier to handle request data
-// before other middleware
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
-
 app.use(function (req, res, next) {
     res.locals.messages = require("express-messages")(req, res);
     next();
 });
-
-
-
 
 /* ***********************
  * View Engine and Templates
