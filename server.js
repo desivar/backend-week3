@@ -103,7 +103,7 @@ app.post("/checkout/submit", utilities.handleErrors(async (req, res) => {
     const { name, email, message, inv_id } = req.body;
     
     try {
-            await inquiryModel.addInquiry(name, email, message);
+            await inquiryModel.addInquiry(name, email, message, inv_id);
         res.redirect("/thankyou");
     } catch (error) {
         let nav = await utilities.getNav();
