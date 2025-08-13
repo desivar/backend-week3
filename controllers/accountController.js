@@ -24,12 +24,16 @@ async function buildLogin(req, res, next) {
 /* ****************************************
  * Deliver registration view
  * *************************************** */
+/* ****************************************
+ * Deliver registration view
+ * *************************************** */
 async function buildRegister(req, res, next) {
     let nav = await utilities.getNav();
     res.render("account/register", {
         title: "Register",
         nav,
         errors: null,
+        csrfToken: req.csrfToken() // Add this line
     });
 }
 
