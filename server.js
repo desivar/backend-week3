@@ -12,6 +12,7 @@ const utilities = require("./utilities");
 const accountRoute = require("./routes/accountRoute");
 const inquiryModel = require("./models/inquiryModel");
 const cookieParser = require("cookie-parser");
+const session = require("express-session");
 
 // Middleware requires
 app.use(express.static("public"));
