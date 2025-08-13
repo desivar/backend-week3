@@ -2,7 +2,7 @@
 const express = require("express");
 const router = new express.Router();
 const invController = require("../controllers/invController");
-console.log("Controller methods loaded:", Object.keys(invController));
+console.log("Controller methods:", Object.keys(invController));
 const utilities = require("../utilities");
 const invValidate = require("../utilities/inventory-validation");
 
@@ -10,7 +10,7 @@ const invValidate = require("../utilities/inventory-validation");
 router.get("/", 
   utilities.checkLogin,
   utilities.checkAdminEmployee,
-  utilities.handleErrors(invController.buildManagementView)
+  utilities.handleErrors(invController.buildManagementView)  // This is line 10
 );
 
 // Route to get inventory JSON data - move this near the top, after the management view route
