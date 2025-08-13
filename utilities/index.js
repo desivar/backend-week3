@@ -151,5 +151,17 @@ Util.checkJWTToken = (req, res, next) => {
    next()
   }
  }
+ /* ****************************************
+* Check if the user is an admin or employee
+**************************************** */
+Util.checkAdminEmployee = (req, res, next) => {
+  if (res.locals.accountData && (res.locals.accountData.account_type === 'Admin' || res.locals.accountData.account_type === 'Employee')) {
+    next();
+  } else {
+    req.flash("notice", "You do not have permission to access this page.");
+    res.redirect("/account/login");
+  }
+};
 
- module.exports = Util
+module.exports = Util
+

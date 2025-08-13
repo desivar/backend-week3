@@ -10,7 +10,7 @@ const invValidate = require("../utilities/inventory-validation");
 router.get("/", 
   utilities.checkLogin,
   utilities.checkAdminEmployee,
-  utilities.handleErrors(invController.managementView) // This is line 10
+utilities.handleErrors(invController.buildManagementView) // This is line 10
 );
 
 // Route to get inventory JSON data - move this near the top, after the management view route
