@@ -13,7 +13,8 @@ const accountRoute = require("./routes/accountRoute");
 const inquiryModel = require("./models/inquiryModel");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
-
+const pool = require('./database/');
+const csurf = require("csurf");
 // Middleware requires
 app.use(express.static("public"));
 app.use(express.json());
