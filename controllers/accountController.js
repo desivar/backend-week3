@@ -127,17 +127,30 @@ async function accountLogin(req, res, next) {
         next(error);
     }
 }
-
 /* ****************************************
  * Process logout request
  * ************************************ */
 async function accountLogout(req, res) {
+    // Clear the JWT cookie
     res.clearCookie("jwt");
-    req.session.destroy();
-    res.locals.loggedin = 0;
-    res.locals.accountData = null;
-    req.flash("notice", "You have been logged out.");
-    return res.redirect("/");
+    
+    // Destroy the session and then redirect
+    req.session.destroy(err => {
+        if (err) {
+            console.error("Error destroying session:", err);
+            // Optional: Handle the error, maybe show a flash message
+            req.flash("error", "Failed to log out. Please try again.");
+            return res.redirect("/account/login");
+        }
+        
+        // Clear local variables
+        res.locals.loggedin = 0;
+        res.locals.accountData = null;
+        
+        // Set a flash message and redirect
+        req.flash("notice", "You have been logged out.");
+        res.redirect("/");
+    });
 }
 
 /* ****************************************
