@@ -14,6 +14,7 @@ async function buildLogin(req, res, next) {
             title: "Login",
             nav,
             errors: null,
+             csrfToken: req.csrfToken(), // <-- Add this line
         });
     } catch (error) {
         next(error);
