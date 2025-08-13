@@ -69,7 +69,7 @@ app.set("layout", "./layouts/layout");
 app.use(static);
 app.use("/inv", utilities.handleErrors(inventoryRoute));
 app.use("/account", utilities.handleErrors(accountRoute));
-app.use("/cart", utilities.handleErrors(cartRoute));
+
 
 // Index route
 app.get("/", utilities.handleErrors(baseController.buildHome));
