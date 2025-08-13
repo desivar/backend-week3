@@ -170,10 +170,8 @@ async function buildAccountUpdate(req, res, next) {
             title: "Update Account",
             nav,
             errors: null,
-            account_id,
-            account_firstname: accountData.account_firstname,
-            account_lastname: accountData.account_lastname,
-            account_email: accountData.account_email
+            accountData: accountData, // Pass the account data as a single object
+            csrfToken: req.csrfToken() // <-- ADD THIS LINE
         });
     } catch (error) {
         next(error);
