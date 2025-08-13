@@ -13,11 +13,10 @@ const accountRoute = require("./routes/accountRoute");
 const inquiryModel = require("./models/inquiryModel");
 
 // Middleware requires
-const cookieParser = require("cookie-parser");
-const session = require("express-session");
-const csurf = require("csurf");
-
-const pool = require("./database/");
+app.use(express.static("public"));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 /* ***********************
  * Middleware
