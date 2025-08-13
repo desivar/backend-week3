@@ -17,7 +17,6 @@ const baseController = require("./controllers/baseController");
 const inventoryRoute = require("./routes/inventoryRoute");
 const utilities = require("./utilities");
 const accountRoute = require("./routes/accountRoute");
-const cartRoute = require("./routes/cartRoute");
 const inquiryModel = require("./models/inquiryModel");
 const bodyParser = require("body-parser");
 
