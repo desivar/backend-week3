@@ -25,9 +25,9 @@ const pool = require("./database/");
 app.use(express.static("public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 app.use(cookieParser());
 
+// Session middleware must be placed before any middleware that uses it
 app.use(
     session({
         store: new (require("connect-pg-simple")(session))({
@@ -41,17 +41,21 @@ app.use(
     })
 );
 
+// Express Messages Middleware (connect-flash) must be after session
+app.use(require("connect-flash")());
+
+// Now, other middleware can follow
 app.use(csurf({ cookie: true }));
 app.use(utilities.checkJWTToken);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Express Messages Middleware
-app.use(require("connect-flash")());
+
 app.use(function (req, res, next) {
     res.locals.messages = require("express-messages")(req, res);
     next();
 });
+
 
 /* ***********************
  * View Engine and Templates
