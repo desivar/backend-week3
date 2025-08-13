@@ -78,13 +78,23 @@ app.use("/account", utilities.handleErrors(accountRoute));
 // Index route
 app.get("/", utilities.handleErrors(baseController.buildHome));
 
+
 // Checkout route
-app.get("/checkout/checkout", utilities.handleErrors(async (req, res) => {
+app.get("/checkout", utilities.handleErrors(async (req, res) => {
+    // Get the inv_id from the URL query parameter
+    const inv_id = req.query.inv_id;
+
+    // Use the inv_id to fetch vehicle details from the database
+    // Note: You will need to create and use a model function for this step
+    // const vehicle = await invModel.getInventoryByInvId(inv_id); 
+
     let nav = await utilities.getNav();
     res.render("checkout/checkout", {
         title: "Checkout",
+        // title: "Checkout for " + vehicle.inv_make + " " + vehicle.inv_model,
         nav,
         csrfToken: req.csrfToken()
+        // vehicle // Pass vehicle data to the view
     });
 }));
 
