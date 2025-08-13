@@ -1,13 +1,6 @@
-/* ******************************************
- * This server.js file is the primary file of the
- * application. It is used to control the project.
- *******************************************/
 /* ***********************
  * Require Statements
  *************************/
-const cookieParser = require("cookie-parser");
-const session = require("express-session");
-const pool = require("./database/");
 const express = require("express");
 const expressLayouts = require("express-ejs-layouts");
 const env = require("dotenv").config();
@@ -18,43 +11,47 @@ const inventoryRoute = require("./routes/inventoryRoute");
 const utilities = require("./utilities");
 const accountRoute = require("./routes/accountRoute");
 const inquiryModel = require("./models/inquiryModel");
-const csurf = require('csurf')
-const cookieParser = require('cookie-parser')
+
+// Middleware requires
+const cookieParser = require("cookie-parser");
+const session = require("express-session");
+const csurf = require("csurf");
 const bodyParser = require("body-parser");
+const pool = require("./database/");
 
 /* ***********************
  * Middleware
  *************************/
 app.use(express.static("public"));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // Add this line for form data
+app.use(express.urlencoded({ extended: true }));
+
+app.use(cookieParser());
 
 app.use(
-	session({
-		store: new (require("connect-pg-simple")(session))({
-			createTableIfMissing: true,
-			pool,
-		}),
-		secret: process.env.SESSION_SECRET,
-		resave: true,
-		saveUninitialized: true,
-		name: "sessionId",
-	})
+    session({
+        store: new (require("connect-pg-simple")(session))({
+            createTableIfMissing: true,
+            pool,
+        }),
+        secret: process.env.SESSION_SECRET,
+        resave: true,
+        saveUninitialized: true,
+        name: "sessionId",
+    })
 );
 
+app.use(csurf({ cookie: true }));
+app.use(utilities.checkJWTToken);
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Express Messages Middleware
 app.use(require("connect-flash")());
 app.use(function (req, res, next) {
-	res.locals.messages = require("express-messages")(req, res);
-	next();
+    res.locals.messages = require("express-messages")(req, res);
+    next();
 });
-
-app.use(cookieParser());
-
-app.use(utilities.checkJWTToken);
 
 /* ***********************
  * View Engine and Templates
@@ -73,12 +70,14 @@ app.use("/account", utilities.handleErrors(accountRoute));
 
 // Index route
 app.get("/", utilities.handleErrors(baseController.buildHome));
+
 // Checkout route
 app.get("/checkout/checkout", utilities.handleErrors(async (req, res) => {
     let nav = await utilities.getNav();
     res.render("checkout/checkout", {
         title: "Checkout",
-        nav
+        nav,
+        csrfToken: req.csrfToken()
     });
 }));
 
@@ -94,7 +93,8 @@ app.post("/checkout/submit", utilities.handleErrors(async (req, res) => {
         res.render("checkout/checkout", {
             title: "Checkout",
             message: "There was an error submitting your form.",
-            nav
+            nav,
+            csrfToken: req.csrfToken()
         });
     }
 }));
@@ -108,16 +108,15 @@ app.get("/thankyou", utilities.handleErrors(async (req, res) => {
     });
 }));
 
-
 // File Not Found Route - must be last route in list
 app.use(
-	utilities.handleErrors(async (req, res, next) => {
-		next({
-			status: 404,
-			message:
-				"Sorry, we appear to have lost that page. I guess we broke the steering Wheel on that link, we'll just have to carpool <a href='/'>home</a>",
-		});
-	})
+    utilities.handleErrors(async (req, res, next) => {
+        next({
+            status: 404,
+            message:
+                "Sorry, we appear to have lost that page. I guess we broke the steering Wheel on that link, we'll just have to carpool <a href='/'>home</a>",
+        });
+    })
 );
 
 /* ***********************
@@ -125,19 +124,19 @@ app.use(
  * Place after all other middleware
  *************************/
 app.use(async (err, req, res, next) => {
-	let nav = await utilities.getNav();
-	console.error(`Error at: "${req.originalUrl}": ${err.message}`);
-	if (err.status == 404) {
-		message = err.message;
-	} else {
-		message =
-			"OOPS!! We broke the steering Wheel on that request, guess we'll just have to carpool <a href='/'>home</a>";
-	}
-	res.render("errors/error", {
-		title: err.status || "Server Error",
-		message,
-		nav,
-	});
+    let nav = await utilities.getNav();
+    console.error(`Error at: "${req.originalUrl}": ${err.message}`);
+    if (err.status == 404) {
+        message = err.message;
+    } else {
+        message =
+            "OOPS!! We broke the steering Wheel on that request, guess we'll just have to carpool <a href='/'>home</a>";
+    }
+    res.render("errors/error", {
+        title: err.status || "Server Error",
+        message,
+        nav,
+    });
 });
 
 /* ***********************
@@ -151,5 +150,5 @@ const host = process.env.HOST;
  * Log statement to confirm server operation
  *************************/
 app.listen(port, () => {
-	console.log(`app listening on ${host}:${port}`);
+    console.log(`app listening on ${host}:${port}`);
 });
