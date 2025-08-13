@@ -131,14 +131,19 @@ async function accountLogin(req, res, next) {
  * Process logout request
  * ************************************ */
 async function accountLogout(req, res) {
+  // Clear the JWT cookie
   res.clearCookie("jwt");
+
+  // Destroy the session and then execute the callback
   req.session.destroy(err => {
     if (err) {
       console.error("Error destroying session:", err);
-      // Optional: Handle the error, maybe show a flash message
+      // If there's an error, you can still flash a message
       req.flash("error", "Failed to log out. Please try again.");
       return res.redirect("/account/login");
     }
+
+    // After the session is destroyed, clear locals, set a flash message, and redirect
     res.locals.loggedin = 0;
     res.locals.accountData = null;
     req.flash("notice", "You have been logged out.");
