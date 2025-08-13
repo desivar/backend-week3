@@ -53,6 +53,11 @@ app.use(function (req, res, next) {
     next();
 });
 
+// Add this middleware after app.use(csurf({ cookie: true }));
+app.use((req, res, next) => {
+    res.locals.csrfToken = req.csrfToken();
+    next();
+});
 /* ***********************
  * View Engine and Templates
  *************************/
