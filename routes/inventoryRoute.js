@@ -7,11 +7,10 @@ console.log("Controller methods:", Object.keys(invController));
 const utilities = require("../utilities");
 const invValidate = require("../utilities/inventory-validation");
 
-// Route to management view - move this to the top of routes
 router.get("/", 
-  utilities.checkLogin,
-  utilities.checkAdminEmployee,
-  utilities.handleErrors(invController.managementView)
+  utilities.checkLogin,
+  utilities.checkAdminEmployee,
+  utilities.handleErrors(invController.buildManagementView) // <--- "buildManagementView" is correct
 );
 
 // Route to get inventory JSON data - move this near the top, after the management view route
