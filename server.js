@@ -18,6 +18,8 @@ const inventoryRoute = require("./routes/inventoryRoute");
 const utilities = require("./utilities");
 const accountRoute = require("./routes/accountRoute");
 const inquiryModel = require("./models/inquiryModel");
+const csurf = require('csurf')
+const cookieParser = require('cookie-parser')
 const bodyParser = require("body-parser");
 
 /* ***********************
