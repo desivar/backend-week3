@@ -2,6 +2,7 @@
 const express = require("express");
 const router = new express.Router();
 const invController = require("../controllers/invController");
+console.log("Controller methods loaded:", Object.keys(invController));
 const utilities = require("../utilities");
 const invValidate = require("../utilities/inventory-validation");
 
