@@ -44,9 +44,12 @@ app.use(
 // Express Messages Middleware (connect-flash) must be after session
 app.use(require("connect-flash")());
 
-// Now, other middleware can follow
+// Now, other middleware that depends on the session can follow
 app.use(csurf({ cookie: true }));
 app.use(utilities.checkJWTToken);
+
+// Body parser middleware should be loaded earlier to handle request data
+// before other middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -55,6 +58,8 @@ app.use(function (req, res, next) {
     res.locals.messages = require("express-messages")(req, res);
     next();
 });
+
+// ... rest of your file
 
 
 /* ***********************
