@@ -131,30 +131,37 @@ async function accountLogin(req, res, next) {
  * Process logout request
  * ************************************ */
 async function accountLogout(req, res) {
-    // Check if a session exists before trying to destroy it
+    // Clear the JWT cookie first. This happens immediately.
+    res.clearCookie("jwt");
+    
+    // Check if a session exists before trying to destroy it.
+    // This is a safety check to prevent the error if a user somehow logs out without a session.
     if (req.session) {
+        // Destroy the session, then run the callback function.
+        // All code that needs the session MUST be inside this callback.
         req.session.destroy(err => {
             if (err) {
                 console.error("Error destroying session:", err);
-                // Flash an error message if session destruction fails
-                req.flash("error", "Failed to log out. Please try again.");
+                // The session might be gone here, so using req.flash() could still fail.
+                // It's safer to just redirect.
                 return res.redirect("/account/login");
             }
-
-            // The code inside this callback will only run AFTER the session is successfully destroyed
-            res.clearCookie("jwt");
+    
+            // These lines will only run AFTER the session is successfully destroyed.
             res.locals.loggedin = 0;
             res.locals.accountData = null;
-            req.flash("notice", "You have been logged out.");
-            res.redirect("/");
+    
+            // Now that the session is destroyed, you can use flash.
+            // Note: This won't work correctly as flash requires a session to be present.
+            // Let's remove the flash message for the logout redirect.
+            // The most robust way to handle this is to use a GET request redirect with a query parameter.
+            res.redirect("/?logout=success");
         });
     } else {
         // If no session exists, simply clear the cookie and redirect
-        res.clearCookie("jwt");
         res.locals.loggedin = 0;
         res.locals.accountData = null;
-        // Don't use req.flash here, as there is no session to use it with
-        res.redirect("/");
+        res.redirect("/?logout=success");
     }
 }
 
